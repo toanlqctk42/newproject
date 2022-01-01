@@ -36,8 +36,16 @@ class MenuModel {
         } else return false;
     }
 
-    public function getSales($years){
-        $this->db->query("SELECT month(bill.create_at)as months, SUM(Totalprice) as Price FROM bill WHERE YEAR(bill.create_at) = '$years.'  group by months ");
+    public function getStatical_byYear($years){
+        $this->db->query("SELECT month(bill.create_at)as months, SUM(Totalprice) as Price FROM bill WHERE YEAR(bill.create_at) = '$years'  group by months ");
+        $array = $this->db->singlearr();
+        if($this->db->rowCount() > 0){
+            return $array;
+        }else return false;
+    }
+
+    public function getStatistical_byMonth($month,$year){
+        $this->db->query("SELECT day(bill.create_at)as days, SUM(Totalprice) as Price FROM bill WHERE YEAR(bill.create_at) = '$year'  AND  Month(bill.create_at) = '$month' group by days;");
         $array = $this->db->singlearr();
         if($this->db->rowCount() > 0){
             return $array;

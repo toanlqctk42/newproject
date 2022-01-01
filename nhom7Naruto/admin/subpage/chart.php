@@ -172,15 +172,44 @@ html.maximized-card {
 <div class="col-md-6">
     <div class="card card-info">
         <div class="card-header">
-            <h3 class="card-title ">Line Chart</h3>
+            <h3 class="card-title ">Bar Chart</h3>
             <form class="float-right" action="">
-                <select name="year" onchange="showSales(this.value)">
+                <select id='inputyear' name="year" onchange="showStatisticalYear(this.value)">
                     <option value="">Select Year:</option>
                     <?php foreach ($result as $row)
                     {
-                        echo "<option value='".$row['years']."'>".$row['years']."</option>";
+                        echo "<option value='".$row['years']."'> Year ".$row['years']."</option>";
                     }
                     ?>
+                </select>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="chart">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-6 pt-3">
+    <div class="card card-info">
+        <div class="card-header">
+            <h3 class="card-title ">Line Chart</h3>
+            <form class="float-right" action="">
+                <select id='inputmonth' name="year" onchange="showStatisticalMonth()">
+                    <option value="">Select Month :</option>
+                    <option value='1'> January</option>
+                    <option value='2'> February</option>
+                    <option value='3'> March</option>
+                    <option value='4'> April</option>
+                    <option value='5'> May</option>
+                    <option value='6'> June</option>
+                    <option value='7'> July</option>
+                    <option value='8'> August</option>
+                    <option value='9'> September</option>
+                    <option value='10'> October</option>
+                    <option value='11'> November</option>
+                    <option value='12'> December</option>
                 </select>
             </form>
         </div>
@@ -190,12 +219,13 @@ html.maximized-card {
             </div>
         </div>
     </div>
-
     <script>
-    function showSales(str) {
+    function showStatisticalYear(str) {
         $.ajax({
-            url: 'controllers/salesController.php',
+            url: 'controllers/statistical.php',
+            type: 'post',
             data: {
+                action: 'getbyYear',
                 years: str,
             },
             success: function(data) {
@@ -211,7 +241,7 @@ html.maximized-card {
                     labels.push(datas[element].months);
                     result.push(datas[element].Price);
                 }
-                new Chart("lineChart", {
+                new Chart("barChart", {
                     type: "bar",
                     data: {
                         labels: labels,
@@ -226,12 +256,58 @@ html.maximized-card {
                         },
                         title: {
                             display: true,
-                            text: "Thống kê"
+                            text: "Thống kê doanh thu theo năm"
                         }
                     }
                 });
             }
         })
     }
+
+    function showStatisticalMonth() {
+        var inputmonth = document.getElementById('inputmonth').value;
+        var inputyear = document.getElementById('inputyear').value;
+        debugger;
+        $.ajax({
+            url: 'controllers/statistical.php',
+            type: 'post',
+            data: {
+                action: 'getbyMonth',
+                years: inputyear,
+                months: inputmonth
+            },
+            success: function(data) {
+                debugger;
+                var datas = JSON.parse(data);
+                var labels = [];
+                var result = [];
+                for (let element in datas) {
+                    labels.push(datas[element].days);
+                    result.push(datas[element].Price);
+                }
+                new Chart("lineChart", {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: result,
+                            backgroundColor: "rgba(0,0,0,1.0)",
+                            borderColor: "rgba(0,0,0,0.1)",
+                            fill: false,
+                            lineTension: 0,
+                        }]
+                    },
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: "Biểu đồ danh thu theo tháng"
+                        },
+                    }
+                });
+            }
+        })
+    }
     </script>
-</div>

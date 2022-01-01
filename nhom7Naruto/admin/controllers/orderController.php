@@ -1,6 +1,6 @@
 <?php
-require_once './models/MenuModels.php';
-include_once './helpers/session_helper.php';
+require_once (__DIR__.'/../models/MenuModels.php');
+include_once (__DIR__.'/../helpers/session_helper.php');
 
 class OrderController
 {
@@ -18,5 +18,17 @@ class OrderController
     {
         $findOrder = $this->MenuModel->findOrder($id);
         return $findOrder;
+    }
+
+    public function getStatisticalByYear($year)
+    {
+        $result = $this->MenuModel->getStatical_byYear($year);
+        return $result;
+    }
+
+    public function getStatisticalByMonth($month,$year)
+    {
+        $result = $this->MenuModel->getStatistical_byMonth($month, $year);
+        return $result;
     }
 }
